@@ -15,3 +15,18 @@ logging.basicConfig(level=logging.INFO)
 
 #Заголовки для моих запросов к ИИ без них не будет дотупа к нему
 HEADERS = {"Authorization": f"Bearer {HF_TOKEN}"}
+
+#функции для ИИ
+def hf_text_query(prompt: str):
+
+	 url="https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+	#указывани адрес модели Mistral-7B-Instruct-v0.2
+	 
+	payload = {"inputs": prompt, "parameters": {"max_new_tokens": 200}} 
+	#payload это тело вопроса нашему боту, ключи: "inputs": prompt - сюда я подставляю вопрос, "parameters": {"max_new_tokens": 200} -  это настройки генерации ответа, а max_new_tokens=200 означает, что ответ может содержать максимум 200
+
+   	 resp = requests.post(url, headers=HEADERS, json=payload, timeout=60)
+	#здесь мы уже реально отправляем запрос к ИИ, где requests.post это функция из requests, отправлящая пост запрос с телом, json=payload превращает payload в JSON и отправляет, timeout=60 ждёт максимум 60 секунд
+
+   	 return resp.json()[0]["generated_text"]
+	#return возвращает ответ мне, а resp — это объект ответа, .json() метод бкрущий ответ и превращает его из JSON в словарь
