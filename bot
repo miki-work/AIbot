@@ -2,5 +2,8 @@ import os #для того чтобы работать с токеном из Т
 import logging #для логирования чтобы бот показываал ошибки в случан чего и я мог работать с ними 
 import requests #чтобы отправлять запросы HTTP и работать с ИИ
 
-
+from dotenv import load_dotenv #чтобы код мог читать .env файл в котором будет мой токен от ТГ бота и api ключ от ИИ
+from telegram import Update #я создал класс который будет работать с сообщениями пользователя
+from telegram.ext import ApplicationBuilder, CommandHandler, Messanger, filters, ContextTypes # 1 создает объект бота, 2 просто реагирует на команды типа start, 3 реагирует на сообщ и фотоб 4 фильтрует входящие сообщ, 4 для контекста сохраняя историю переписки
+  
  
