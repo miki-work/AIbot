@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 #Заголовки для моих запросов к ИИ без них не будет дотупа к нему
 HEADERS = {"Authorization": f"Bearer {HF_TOKEN}"}
 
-#функции для ИИ
+#функции для ИИ первое это для текста
 def hf_text_query(prompt: str):
 
 	 url="https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
@@ -30,3 +30,13 @@ def hf_text_query(prompt: str):
 
    	 return resp.json()[0]["generated_text"]
 	#return возвращает ответ мне, а resp — это объект ответа, .json() метод бкрущий ответ и превращает его из JSON в словарь
+
+#тоже самое для фото
+def hf_image_caption(image_bytes: bytes):
+
+    	url = "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-base"
+
+    	resp = requests.post(url, headers=HEADERS, files={"inputs": image_bytes})
+
+    	return resp.json()[0]["generated_text"]
+
