@@ -44,8 +44,24 @@ def hf_image_caption(image_bytes: bytes):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Привет! Пришли текст или фото, я отвечу с помощью ИИ.")
 
-#ассинхронная функция для обпаботки вопросов от юзера 
+
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_text = update.message.text #я получаю сообщение, написанное пользователем сохраняя в user_text
     answer = hf_text_query(user_text) #я вызываю функцию отправляющую текст в ИИ (Hugging Face) и получаю ответ
     await update.message.reply_text(answer) #я отправляю ответ обратно юзеру в TГ, а await нужен, чтобы дождаться успешной отправки
+#ассинхронная функция для обработки вопросов от юзера
+#получает текст, отправляет его и возвращает ответ обратно в чат
+
+async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    photo = update.message.photo[-1]  #беру фото в макс качестве
+    bio = await photo.get_file() #получа доступ к файлу на сервере телеги
+    image_bytes = await bio.download_as_bytearray()  #скачиваю картинку в память в виде байтов
+    caption = hf_image_caption(image_bytes)  #отпраляю фото в модель и получаю описание
+    await update.message.reply_text(f"Описание фото: {caption}")  #получаю описание фото
+#асинхронная функция для обработки фото от юзера
+#скачивает фото, отправляя его и возвращая описание
+
+
+
+
+
