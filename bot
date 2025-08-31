@@ -44,3 +44,8 @@ def hf_image_caption(image_bytes: bytes):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Привет! Пришли текст или фото, я отвечу с помощью ИИ.")
 
+#ассинхронная функция для обпаботки вопросов от юзера 
+async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_text = update.message.text #я получаю сообщение, написанное пользователем сохраняя в user_text
+    answer = hf_text_query(user_text) #я вызываю функцию отправляющую текст в ИИ (Hugging Face) и получаю ответ
+    await update.message.reply_text(answer) #я отправляю ответ обратно юзеру в TГ, а await нужен, чтобы дождаться успешной отправки
