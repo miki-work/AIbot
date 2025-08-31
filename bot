@@ -40,3 +40,7 @@ def hf_image_caption(image_bytes: bytes):
 
     	return resp.json()[0]["generated_text"]
 
+#отвечает на команду старт чтобы кинуть привет юзнру
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Привет! Пришли текст или фото, я отвечу с помощью ИИ.")
+
