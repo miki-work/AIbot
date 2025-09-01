@@ -61,7 +61,9 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 #асинхронная функция для обработки фото от юзера
 #скачивает фото, отправляя его и возвращая описание
 
+def main():
 
+    app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
+    #создал апп (объект бота), передал ему токен для связи с tgAPI
 
-
-
+    
