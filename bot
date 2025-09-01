@@ -42,9 +42,13 @@ def hf_text_query(prompt: str):
     resp = requests.post(url, headers=HEADERS, json=payload, timeout=60)
     #здесь мы уже реально отправляем запрос к ИИ, где requests.post это функция из requests, отправлящая пост запрос с телом, json=payload превращает payload в JSON и отправляет, timeout=60 ждёт максимум 60 секунд
 
-    return resp.json()[0]["generated_text"]
-    #return возвращает ответ мне, а resp — это объект ответа, .json() метод бкрущий ответ и превращает его из JSON в словарь
+    resp.raise_for_status()
 
+    data = resp.json()
+
+    return data[0]["generated_text"] if data and "generated_text" in data[0] else "модель не вернула текст"
+    #return возвращает ответ мне, а resp — это объект ответа, .json() метод бкрущий ответ и превращает его из JSON в словарь
+  
 #тоже самое для фото
 
 def hf_image_caption(image_bytes: bytes):
@@ -53,9 +57,11 @@ def hf_image_caption(image_bytes: bytes):
 
     resp = requests.post(url, headers=HEADERS, files={"inputs": image_bytes})
 
-    return resp.json()[0]["generated_text"]
+    data = resp.json()
+    return data[0]["generated_text"] if data and "generated_text" in data[0] else "модель не вернула описание"
 
-#отвечает на команду старт чтобы кинуть привет юзнру
+
+#отвечает на команду старт чтобы кинуть привет юзеру
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
