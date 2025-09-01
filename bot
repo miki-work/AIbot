@@ -1,22 +1,36 @@
 import os #для того чтобы работать с токеном из ТГ, без этого бот не будет знать свой ключ
+
 import logging #для логирования чтобы бот показываал ошибки в случан чего и я мог работать с ними 
+
 import requests #чтобы отправлять запросы HTTP и работать с ИИ
 
+
 from dotenv import load_dotenv #чтобы код мог читать .env файл в котором будет мой токен от ТГ бота и api ключ от ИИ
+
 from telegram import Update #я создал класс который будет работать с сообщениями пользователя
+
 from telegram.ext import ApplicationBuilder, CommandHandler, Messanger, filters, ContextTypes # 1 создает объект или ядро бота, 2 просто реагирует на команды типа start, 3 реагирует на сообщ и фотоб 4 фильтрует входящие сообщ, 4 для контекста сохраняя историю переписки
   
+
 load_dotenv() #использую эту функцию чтобы подгрузить .env файл
+
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+
 HF_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")     # токен телеграмма и ИИ
 
+
 #настраиваем логирование с помощью функции basicConfig где level=logging.INFO включает в себе все важные события программы 
+
 logging.basicConfig(level=logging.INFO)
 
+
 #Заголовки для моих запросов к ИИ без них не будет дотупа к нему
+
 HEADERS = {"Authorization": f"Bearer {HF_TOKEN}"}
 
+
 #функции для ИИ первое это для текста
+
 def hf_text_query(prompt: str):
 
 	 url="https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
@@ -32,6 +46,7 @@ def hf_text_query(prompt: str):
 	#return возвращает ответ мне, а resp — это объект ответа, .json() метод бкрущий ответ и превращает его из JSON в словарь
 
 #тоже самое для фото
+
 def hf_image_caption(image_bytes: bytes):
 
     	url = "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-base"
@@ -41,25 +56,41 @@ def hf_image_caption(image_bytes: bytes):
     	return resp.json()[0]["generated_text"]
 
 #отвечает на команду старт чтобы кинуть привет юзнру
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     await update.message.reply_text("Привет! Пришли текст или фото, я отвечу с помощью ИИ.")
 
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     user_text = update.message.text #я получаю сообщение, написанное пользователем сохраняя в user_text
+
     answer = hf_text_query(user_text) #я вызываю функцию отправляющую текст в ИИ (Hugging Face) и получаю ответ
+
     await update.message.reply_text(answer) #я отправляю ответ обратно юзеру в TГ, а await нужен, чтобы дождаться успешной отправки
+
 #ассинхронная функция для обработки вопросов от юзера
+
 #получает текст, отправляет его и возвращает ответ обратно в чат
 
+
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
     photo = update.message.photo[-1]  #беру фото в макс качестве
+
     bio = await photo.get_file() #получа доступ к файлу на сервере телеги
+
     image_bytes = await bio.download_as_bytearray()  #скачиваю картинку в память в виде байтов
+
     caption = hf_image_caption(image_bytes)  #отпраляю фото в модель и получаю описание
+
     await update.message.reply_text(f"Описание фото: {caption}")  #получаю описание фото
-#асинхронная функция для обработки фото от юзера
-#скачивает фото, отправляя его и возвращая описание
+    
+    #асинхронная функция для обработки фото от юзера
+    
+    #скачивает фото, отправляя его и возвращая описание
+
 
 def main():
 
@@ -78,3 +109,10 @@ def main():
     #ксли юзер прислал фото то запустится handle_photo
 
 
+    #запускаю бота в режиме polling (бот опрашивает сервер телеги и обрабатывает новые сообщения)
+    app.run_polling()
+
+
+#эта проверка нужна, чтобы бот запускался только при прямом запуске файла, а не когда файл импортируется как модуль в другом коде
+if __name__ == "__main__":
+    main()
