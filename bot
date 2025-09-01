@@ -33,27 +33,27 @@ HEADERS = {"Authorization": f"Bearer {HF_TOKEN}"}
 
 def hf_text_query(prompt: str):
 
-	 url="https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
-	#указывани адрес модели Mistral-7B-Instruct-v0.2
+    url="https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
+    #указывани адрес модели Mistral-7B-Instruct-v0.2
 	 
-	payload = {"inputs": prompt, "parameters": {"max_new_tokens": 200}} 
-	#payload это тело вопроса нашему боту, ключи: "inputs": prompt - сюда я подставляю вопрос, "parameters": {"max_new_tokens": 200} -  это настройки генерации ответа, а max_new_tokens=200 означает, что ответ может содержать максимум 200
+    payload = {"inputs": prompt, "parameters": {"max_new_tokens": 200}} 
+    #payload это тело вопроса нашему боту, ключи: "inputs": prompt - сюда я подставляю вопрос, "parameters": {"max_new_tokens": 200} -  это настройки генерации ответа, а max_new_tokens=200 означает, что ответ может содержать максимум 200
 
-   	 resp = requests.post(url, headers=HEADERS, json=payload, timeout=60)
-	#здесь мы уже реально отправляем запрос к ИИ, где requests.post это функция из requests, отправлящая пост запрос с телом, json=payload превращает payload в JSON и отправляет, timeout=60 ждёт максимум 60 секунд
+    resp = requests.post(url, headers=HEADERS, json=payload, timeout=60)
+    #здесь мы уже реально отправляем запрос к ИИ, где requests.post это функция из requests, отправлящая пост запрос с телом, json=payload превращает payload в JSON и отправляет, timeout=60 ждёт максимум 60 секунд
 
-   	 return resp.json()[0]["generated_text"]
-	#return возвращает ответ мне, а resp — это объект ответа, .json() метод бкрущий ответ и превращает его из JSON в словарь
+    return resp.json()[0]["generated_text"]
+    #return возвращает ответ мне, а resp — это объект ответа, .json() метод бкрущий ответ и превращает его из JSON в словарь
 
 #тоже самое для фото
 
 def hf_image_caption(image_bytes: bytes):
 
-    	url = "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-base"
+    url = "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-base"
 
-    	resp = requests.post(url, headers=HEADERS, files={"inputs": image_bytes})
+    resp = requests.post(url, headers=HEADERS, files={"inputs": image_bytes})
 
-    	return resp.json()[0]["generated_text"]
+    return resp.json()[0]["generated_text"]
 
 #отвечает на команду старт чтобы кинуть привет юзнру
 
@@ -98,7 +98,7 @@ def main():
     #создал апп (объект бота), передал ему токен для связи с tgAPI
     
     #подключаю обработчики то есть правила, чтобы бот делал определенные команды при разных событиях
-   
+
     app.add_handler(CommandHandler("start", start))
     #если юзер  напишет команду /start то запустится функция start
 
@@ -106,7 +106,7 @@ def main():
     #если юзер прислал текст(не команда) то запустится функция handle_text
 
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))  
-    #ксли юзер прислал фото то запустится handle_photo
+    #если юзер прислал фото то запустится handle_photo
 
 
     #запускаю бота в режиме polling (бот опрашивает сервер телеги и обрабатывает новые сообщения)
