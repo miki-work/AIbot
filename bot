@@ -65,5 +65,16 @@ def main():
 
     app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     #создал апп (объект бота), передал ему токен для связи с tgAPI
-
     
+    #подключаю обработчики то есть правила, чтобы бот делал определенные команды при разных событиях
+   
+    app.add_handler(CommandHandler("start", start))
+    #если юзер  напишет команду /start то запустится функция start
+
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))  
+    #если юзер прислал текст(не команда) то запустится функция handle_text
+
+    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))  
+    #ксли юзер прислал фото то запустится handle_photo
+
+
